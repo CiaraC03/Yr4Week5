@@ -13,9 +13,12 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerRepository customerRepository;
+    CustomerService customerService;
 
-    public CustomerController(CustomerRepository customerRepository) {
+
+    public CustomerController(CustomerRepository customerRepository, CustomerService customerService) {
         this.customerRepository = customerRepository;
+        this.customerService = customerService;
     }
 
     @GetMapping
@@ -25,12 +28,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable String id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isPresent()) {
-            return ResponseEntity.ok(customer.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return customerService.getCustomerById(id);
     }
 
     @PostMapping
@@ -41,10 +39,6 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable String id) {
-        if (customerRepository.existsById(id)) {
-            customerRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        return customerService.deleteCustomer(id);
     }
 }
