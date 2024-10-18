@@ -1,36 +1,43 @@
 package ie.atu.week5.customerapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomerService {
-    @Autowired
     private CustomerRepository customerRepository;
 
-    public CustomerService(CustomerRepository customerRepository){
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<Customer> getCustomerById(String id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isPresent()) {
-            return ResponseEntity.ok(customer.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public List<Customer> getCustomers() {
+        return customerRepository.findAll();
     }
 
-    public ResponseEntity<Void> deleteCustomer(String id){
+    public Customer getCustomerId(String id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        return customer.get();
+
+    }
+
+    public Customer createNewCustomer(Customer customer) {
+        Customer savedCustomer = customerRepository.save(customer);
+        return savedCustomer;
+    }
+
+    public Void deleteCustomer(String id) {
         if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
-
 }
