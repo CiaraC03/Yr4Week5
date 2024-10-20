@@ -17,7 +17,7 @@ public class CustomerOrderController {
 
     private final OrderRepository orderRepository;
 
-    public CustomerOrderController(CustomerRepository customerRepository, OrderRepository orderRepository) {
+    public CustomerOrderController(CustomerRepository customerRepository, OrderRepository orderRepository, CustomerService customerService, OrderController orderController) {
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
     }
@@ -26,10 +26,17 @@ public class CustomerOrderController {
     public ResponseEntity<String> createCustomerWithOrders(@RequestBody CustomerOrderRequest customerOrderRequest) {
 
         // 1. Save the Customer and get the generated customer ID
+        Customer customer = customerOrderRequest.getCustomer();
+        Customer savedCustomer = customerRepository.save(customer);
+        String customerId = savedCustomer.getId();
 
 
         // 2. Save the Orders and link them to the customer
-
+        List<Order> orders = customerOrderRequest.getOrders();
+        for(Order order: orders){
+            order.setCustomerId(customerId);
+        }
+        orderRepository.saveAll(orders);
 
         return ResponseEntity.ok("Customer and orders created successfully");
     }
