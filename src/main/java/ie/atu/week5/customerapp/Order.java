@@ -1,11 +1,11 @@
 package ie.atu.week5.customerapp;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Document(collection = "orders")
